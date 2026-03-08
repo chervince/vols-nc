@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+/* Thème personnalisé Aircalin */
+@theme {
+  --color-aircalin-blue: #0066b3;
+  --color-aircalin-dark: #004a82;
+  --color-aircalin-coral: #ff6b4a;
+  --color-aircalin-light: #e6f2fa;
+  --color-aircalin-gray: #f5f7fa;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply min-h-screen bg-aircalin-gray text-gray-900 antialiased;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Custom utilities */
+@utility container-app {
+  @apply mx-auto max-w-4xl px-4;
+}
+
+/* Focus styles pour accessibilité */
+@utility focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-aircalin-blue focus:ring-offset-2;
+}
+
+/* Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
