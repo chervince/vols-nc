@@ -2,8 +2,11 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { FlightFilter } from "@/types";
 
+// Date du jour à Nouméa (fuseau des vols suivis), au format AAAA-MM-JJ.
+// Surtout pas l'UTC : à UTC+11, chaque matin jusqu'à 11 h l'UTC est encore
+// sur la veille — l'app s'ouvrait sur les vols d'hier (story-001).
 function getTodayDate(): string {
-  return new Date().toISOString().slice(0, 10);
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Pacific/Noumea" }).format(new Date());
 }
 
 interface FiltersState {

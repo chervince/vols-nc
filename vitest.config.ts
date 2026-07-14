@@ -11,10 +11,10 @@ export default mergeConfig(
       coverage: {
         include: ["src/**"],
         thresholds: {
-          lines: 13,
-          functions: 16,
+          lines: 28,
+          functions: 38,
           branches: 5,
-          statements: 13,
+          statements: 27,
         },
       },
     },
