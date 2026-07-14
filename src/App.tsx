@@ -1,8 +1,8 @@
-import { Header, DatePicker, FilterBar, FlightList } from '@/components'
-import { useFlights } from '@/hooks/useFlights'
+import { DatePicker, FilterBar, FlightList, Header } from "@/components";
+import { useFlights } from "@/hooks/useFlights";
 
 function App() {
-  const { flights, isLoading, isError, error, refetch } = useFlights()
+  const { flights, isLoading, isError, error, refetch } = useFlights();
 
   return (
     <div className="min-h-screen bg-aircalin-gray">
@@ -28,7 +28,7 @@ function App() {
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white py-4 text-center text-sm text-gray-500">
         <p>
-          Données fournies par{' '}
+          Données fournies par{" "}
           <a
             href="https://www.aerodatabox.com/"
             target="_blank"
@@ -40,7 +40,7 @@ function App() {
         </p>
       </footer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

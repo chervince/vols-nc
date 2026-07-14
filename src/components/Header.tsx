@@ -5,6 +5,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-full bg-white/20">
             <svg
+              aria-hidden="true"
               className="size-6"
               fill="none"
               stroke="currentColor"
@@ -25,5 +26,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

@@ -1,18 +1,24 @@
-import { useFiltersStore } from '@/stores/filters'
-import { formatDate } from '@/utils'
+import { useFiltersStore } from "@/stores/filters";
+import { formatDate } from "@/utils";
 
 export function DatePicker() {
-  const { selectedDate, setSelectedDate, goToPreviousDay, goToNextDay } =
-    useFiltersStore()
+  const { selectedDate, setSelectedDate, goToPreviousDay, goToNextDay } = useFiltersStore();
 
   return (
     <div className="flex items-center gap-2">
       <button
+        type="button"
         onClick={goToPreviousDay}
         className="flex size-10 items-center justify-center rounded-lg bg-white text-aircalin-blue shadow-sm transition-colors hover:bg-aircalin-light"
         aria-label="Jour précédent"
       >
-        <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          aria-hidden="true"
+          className="size-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
       </button>
@@ -26,7 +32,13 @@ export function DatePicker() {
           aria-label="Sélectionner une date"
         />
         <div className="flex min-w-[200px] items-center justify-center gap-2 rounded-lg bg-white px-4 py-2 font-medium text-gray-800 shadow-sm">
-          <svg className="size-5 text-aircalin-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            aria-hidden="true"
+            className="size-5 text-aircalin-blue"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -39,14 +51,21 @@ export function DatePicker() {
       </div>
 
       <button
+        type="button"
         onClick={goToNextDay}
         className="flex size-10 items-center justify-center rounded-lg bg-white text-aircalin-blue shadow-sm transition-colors hover:bg-aircalin-light"
         aria-label="Jour suivant"
       >
-        <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          aria-hidden="true"
+          className="size-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </button>
     </div>
-  )
+  );
 }

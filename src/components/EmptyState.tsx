@@ -3,6 +3,7 @@ export function EmptyState() {
     <div className="flex flex-col items-center justify-center rounded-xl bg-white py-12 text-center shadow-sm">
       <div className="flex size-16 items-center justify-center rounded-full bg-aircalin-light">
         <svg
+          aria-hidden="true"
           className="size-8 text-aircalin-blue"
           fill="none"
           stroke="currentColor"
@@ -16,12 +17,8 @@ export function EmptyState() {
           />
         </svg>
       </div>
-      <h3 className="mt-4 text-lg font-semibold text-gray-900">
-        Aucun vol Aircalin
-      </h3>
-      <p className="mt-1 text-gray-500">
-        Aucun vol trouvé pour cette date et ces filtres.
-      </p>
+      <h3 className="mt-4 text-lg font-semibold text-gray-900">Aucun vol Aircalin</h3>
+      <p className="mt-1 text-gray-500">Aucun vol trouvé pour cette date et ces filtres.</p>
     </div>
-  )
+  );
 }

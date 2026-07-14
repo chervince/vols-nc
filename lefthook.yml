@@ -1,0 +1,32 @@
+# Harness git hooks — agnostic. Fast checks on commit, full gate on push.
+# The full gate also runs in CI; the pre-push hook is the local mirror of it.
+
+pre-commit:
+  parallel: true
+  commands:
+    fmt:
+      run: just fmt
+    lint:
+      run: just lint
+
+pre-push:
+  commands:
+    gate:
+      run: just gate
+
+commit-msg:
+  commands:
+    conventional:
+      # Enforce Conventional Commits (types from .harness/commit-convention.md).
+      # lefthook runs `run` blocks via sh. Subject line only: shape, then the
+      # ≤72-char cap from the convention.
+      run: |
+        subject=$(head -n1 "{1}")
+        echo "$subject" | grep -Eq '^(feat|fix|refactor|perf|test|docs|chore|ci|build)(\([a-z0-9-]+\))?!?: .+' || {
+          echo "✗ Le message de commit doit suivre Conventional Commits (voir .harness/commit-convention.md)."
+          exit 1
+        }
+        [ "${#subject}" -le 72 ] || {
+          echo "✗ Sujet de commit : ${#subject} caractères (max 72)."
+          exit 1
+        }
