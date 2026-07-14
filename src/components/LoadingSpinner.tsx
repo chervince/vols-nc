@@ -4,5 +4,5 @@ export function LoadingSpinner() {
       <div className="size-12 animate-spin rounded-full border-4 border-aircalin-light border-t-aircalin-blue" />
       <p className="mt-4 text-gray-600">Chargement des vols...</p>
     </div>
-  )
+  );
 }

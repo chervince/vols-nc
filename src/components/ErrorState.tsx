@@ -1,6 +1,6 @@
 interface ErrorStateProps {
-  message: string
-  onRetry?: () => void
+  message: string;
+  onRetry?: () => void;
 }
 
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
@@ -8,6 +8,7 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
     <div className="flex flex-col items-center justify-center rounded-xl bg-white py-12 text-center shadow-sm">
       <div className="flex size-16 items-center justify-center rounded-full bg-red-100">
         <svg
+          aria-hidden="true"
           className="size-8 text-red-600"
           fill="none"
           stroke="currentColor"
@@ -21,12 +22,11 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
           />
         </svg>
       </div>
-      <h3 className="mt-4 text-lg font-semibold text-gray-900">
-        Erreur de chargement
-      </h3>
+      <h3 className="mt-4 text-lg font-semibold text-gray-900">Erreur de chargement</h3>
       <p className="mt-1 max-w-sm text-gray-500">{message}</p>
       {onRetry && (
         <button
+          type="button"
           onClick={onRetry}
           className="mt-4 rounded-lg bg-aircalin-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-aircalin-dark"
         >
@@ -34,5 +34,5 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
         </button>
       )}
     </div>
-  )
+  );
 }

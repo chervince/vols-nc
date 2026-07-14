@@ -1,0 +1,12 @@
+3266526998 8635 .harness/HARNESS.md
+370925692 3237 .harness/review.md
+2333384784 1782 .harness/commit-convention.md
+2745315279 1642 .harness/decisions/README.md
+152719514 712 .harness/decisions/0000-template.md
+4111350530 4744 .harness/gates.sh
+649140318 1173 justfile
+666451144 997 lefthook.yml
+1833936855 1675 biome.harness.json
+1794265943 760 tsconfig.harness.json
+3104372717 516 vitest.config.harness.ts
+2396114950 2751 .github/workflows/gate.yml

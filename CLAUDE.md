@@ -138,3 +138,9 @@ npm run lint      # ESLint
 ## Codes aéroports fréquents Aircalin
 
 NOU (Nouméa), SYD (Sydney), BNE (Brisbane), MEL (Melbourne), AKL (Auckland), NAN (Nadi), VLI (Port-Vila), WLS (Wallis), PPT (Papeete), SIN (Singapour), NRT/TYO (Tokyo), KIX (Osaka), CDG (Paris)
+
+<!-- harness:pointer -->
+## Harness
+Quality contract: load `.harness/HARNESS.md` before planning or writing code.
+One command judges everything: `just gate` (green is the floor, not the goal).
+Non-trivial diffs are reviewed with `.harness/review.md` (floor → spec → Tier 1).

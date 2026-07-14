@@ -1,0 +1,90 @@
+# Harness gate — Node. Runs the exact same `just gate` as local pre-push.
+# Make this a required status check in branch protection (GitHub Pro).
+name: gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1" # lundi 06:00 UTC — cadence de fraîcheur des dépendances
+  workflow_dispatch:
+
+jobs:
+  gate:
+    # Déterministe : pas d'audit réseau ici. Ne tourne pas sur le cron.
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect package manager
+        id: pm
+        run: |
+          if [ -f pnpm-lock.yaml ]; then echo "pm=pnpm" >> "$GITHUB_OUTPUT"; else echo "pm=npm" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: pnpm/action-setup@v4
+        if: steps.pm.outputs.pm == 'pnpm'
+        with:
+          # Retirez `version` si le projet épingle pnpm via `packageManager`
+          # (sinon action-setup échoue : "Multiple versions of pnpm specified").
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: ${{ steps.pm.outputs.pm }}
+
+      - name: Install deps
+        # npm ignore `--frozen-lockfile` (flag inconnu) → install non verrouillée.
+        # Chaque gestionnaire a sa forme reproductible : `npm ci` vs `pnpm … --frozen-lockfile`.
+        run: |
+          if [ "${{ steps.pm.outputs.pm }}" = "pnpm" ]; then
+            pnpm install --frozen-lockfile
+          else
+            npm ci
+          fi
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      - name: Run gate
+        run: just gate
+
+  # Audit hors du gate bloquant (ADR-0002) : cadence hebdo + déclenchable à la main.
+  audit:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect package manager
+        id: pm
+        run: |
+          if [ -f pnpm-lock.yaml ]; then echo "pm=pnpm" >> "$GITHUB_OUTPUT"; else echo "pm=npm" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: pnpm/action-setup@v4
+        if: steps.pm.outputs.pm == 'pnpm'
+        with:
+          # Retirez `version` si le projet épingle pnpm via `packageManager`
+          # (sinon action-setup échoue : "Multiple versions of pnpm specified").
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: ${{ steps.pm.outputs.pm }}
+
+      - name: Install deps
+        run: |
+          if [ "${{ steps.pm.outputs.pm }}" = "pnpm" ]; then
+            pnpm install --frozen-lockfile
+          else
+            npm ci
+          fi
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      - name: Run audit
+        run: just audit

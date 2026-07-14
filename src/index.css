@@ -16,8 +16,9 @@ html {
 
 body {
   @apply min-h-screen bg-aircalin-gray text-gray-900 antialiased;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
 }
 
 /* Custom utilities */

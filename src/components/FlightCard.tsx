@@ -1,18 +1,18 @@
-import type { DisplayFlight } from '@/types'
+import type { DisplayFlight } from "@/types";
 import {
-  formatTime,
   formatFlightNumber,
   formatFlightStatus,
-  getStatusClasses,
+  formatTime,
   getAirportCity,
-} from '@/utils'
+  getStatusClasses,
+} from "@/utils";
 
 interface FlightCardProps {
-  flight: DisplayFlight
+  flight: DisplayFlight;
 }
 
 export function FlightCard({ flight }: FlightCardProps) {
-  const isDeparture = flight.direction === 'departure'
+  const isDeparture = flight.direction === "departure";
 
   return (
     <div className="overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-md">
@@ -21,11 +21,17 @@ export function FlightCard({ flight }: FlightCardProps) {
         <div className="flex items-center gap-3">
           <span
             className={`flex size-8 items-center justify-center rounded-full text-white ${
-              isDeparture ? 'bg-aircalin-coral' : 'bg-aircalin-blue'
+              isDeparture ? "bg-aircalin-coral" : "bg-aircalin-blue"
             }`}
           >
             {isDeparture ? (
-              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                aria-hidden="true"
+                className="size-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -34,7 +40,13 @@ export function FlightCard({ flight }: FlightCardProps) {
                 />
               </svg>
             ) : (
-              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                aria-hidden="true"
+                className="size-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -48,9 +60,7 @@ export function FlightCard({ flight }: FlightCardProps) {
             <span className="text-lg font-bold text-gray-900">
               {formatFlightNumber(flight.number)}
             </span>
-            <span className="ml-2 text-sm text-gray-500">
-              {isDeparture ? 'Départ' : 'Arrivée'}
-            </span>
+            <span className="ml-2 text-sm text-gray-500">{isDeparture ? "Départ" : "Arrivée"}</span>
           </div>
         </div>
         <span
@@ -71,9 +81,7 @@ export function FlightCard({ flight }: FlightCardProps) {
             <p className="text-lg font-semibold text-aircalin-blue">
               {flight.departure.airport.iata}
             </p>
-            <p className="text-sm text-gray-500">
-              {getAirportCity(flight.departure.airport.iata)}
-            </p>
+            <p className="text-sm text-gray-500">{getAirportCity(flight.departure.airport.iata)}</p>
           </div>
 
           {/* Flèche et durée */}
@@ -81,6 +89,7 @@ export function FlightCard({ flight }: FlightCardProps) {
             <div className="flex w-full items-center">
               <div className="h-px flex-1 bg-gray-300" />
               <svg
+                aria-hidden="true"
                 className="mx-2 size-5 text-aircalin-blue"
                 fill="none"
                 stroke="currentColor"
@@ -108,23 +117,19 @@ export function FlightCard({ flight }: FlightCardProps) {
             <p className="text-lg font-semibold text-aircalin-blue">
               {flight.arrival.airport.iata}
             </p>
-            <p className="text-sm text-gray-500">
-              {getAirportCity(flight.arrival.airport.iata)}
-            </p>
+            <p className="text-sm text-gray-500">{getAirportCity(flight.arrival.airport.iata)}</p>
           </div>
         </div>
 
         {/* Infos supplémentaires */}
         {(flight.departure.terminal || flight.departure.gate || flight.aircraft?.reg) && (
           <div className="mt-4 flex flex-wrap gap-3 border-t border-gray-100 pt-3 text-xs text-gray-500">
-            {flight.departure.terminal && (
-              <span>Terminal {flight.departure.terminal}</span>
-            )}
+            {flight.departure.terminal && <span>Terminal {flight.departure.terminal}</span>}
             {flight.departure.gate && <span>Porte {flight.departure.gate}</span>}
             {flight.aircraft?.reg && <span>Immat. {flight.aircraft.reg}</span>}
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
