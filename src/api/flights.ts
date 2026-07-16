@@ -84,6 +84,13 @@ async function fetchFlightsPeriod(from: string, to: string): Promise<ApiFlightsR
     throw new ApiError(`Erreur serveur (${response.status})`, response.status);
   }
 
+  // 204 No Content : AeroDataBox répond ça pour un aéroport/créneau sans vol.
+  // response.ok est vrai (2xx), donc le cas passe le bloc d'erreurs ci-dessus ;
+  // sans ce court-circuit, response.json() planterait sur un corps vide.
+  if (response.status === 204) {
+    return { departures: [], arrivals: [] };
+  }
+
   return response.json();
 }
 
