@@ -17,6 +17,11 @@ describe("formatTime", () => {
   it("convertit une heure UTC vers l'heure de Nouméa (UTC+11)", () => {
     expect(formatTime("2026-01-15T21:30Z")).toBe("08:30");
   });
+
+  it("retourne un tiret pour un horaire inconnu ou invalide", () => {
+    expect(formatTime("")).toBe("—");
+    expect(formatTime("pas une date")).toBe("—");
+  });
 });
 
 describe("formatDate", () => {
@@ -65,5 +70,10 @@ describe("getAirportCity", () => {
 
   it("retourne le code IATA tel quel s'il est inconnu", () => {
     expect(getAirportCity("XXX")).toBe("XXX");
+  });
+
+  it("connaît les escales domestiques calédoniennes", () => {
+    expect(getAirportCity("LIF")).toBe("Lifou");
+    expect(getAirportCity("ILP")).toBe("Île des Pins");
   });
 });

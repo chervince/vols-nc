@@ -6,6 +6,8 @@ import type { FlightStatus } from "@/types";
  */
 export function formatTime(isoString: string): string {
   const date = new Date(isoString);
+  // Horaire inconnu (la CCI ne donne l'heure que d'un côté du vol) → tiret.
+  if (Number.isNaN(date.getTime())) return "—";
   return date.toLocaleTimeString("fr-FR", {
     hour: "2-digit",
     minute: "2-digit",
@@ -102,6 +104,16 @@ const airportNames: Record<string, string> = {
   BKK: "Bangkok",
   ICN: "Séoul",
   HKG: "Hong Kong",
+  // Domestique Nouvelle-Calédonie (Air Calédonie, depuis Tontouta — ADR-0004)
+  LIF: "Lifou",
+  MEE: "Maré",
+  UVE: "Ouvéa",
+  ILP: "Île des Pins",
+  MGA: "Magenta",
+  // Autres escales présentes au tableau CCI
+  APW: "Apia",
+  CNS: "Cairns",
+  HIK: "Honolulu",
 };
 
 /**

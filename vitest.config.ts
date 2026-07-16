@@ -3,7 +3,7 @@ import harness from "./vitest.config.harness";
 
 // Plancher de couverture : relevé au niveau mesuré à chaque story qui touche de
 // la logique (cliquet — ADR-0002 dans .harness/decisions/), jamais baissé en
-// silence. Dernier relèvement : tests de src/api/flights.ts.
+// silence. Dernier relèvement : bascule sur la source CCI (parseur + client).
 export default mergeConfig(
   harness,
   defineConfig({
@@ -11,10 +11,10 @@ export default mergeConfig(
       coverage: {
         include: ["src/**"],
         thresholds: {
-          lines: 53,
-          functions: 50,
-          branches: 25,
-          statements: 51,
+          lines: 61,
+          functions: 57,
+          branches: 39,
+          statements: 59,
         },
       },
     },

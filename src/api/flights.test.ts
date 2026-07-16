@@ -1,101 +1,66 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiError, fetchFlights } from "./flights";
 
-// Fausse réponse fetch minimale. Reproduit le comportement réel, y compris le
-// corps vide d'un 204 dont `.json()` échoue — le bug qu'on couvre ici.
-function fakeResponse(status: number, body?: unknown): Response {
+const TABLE = (rows: string) =>
+  `<table class="table cci-aeroport-flights is-responsive">${rows}</table>`;
+
+const DEPARTURES = TABLE(
+  `<tr><th>Date</th><th>Heure</th><th>Destination</th><th>Compagnie</th><th>Numéro</th><th>Obs</th></tr>
+   <tr><td>16/07/2026</td><td>07:00</td><td>Lifou</td><td>Air Calédonie</td><td>TY203</td><td></td></tr>`,
+);
+const ARRIVALS = TABLE(
+  `<tr><th>Date</th><th>Heure</th><th>Provenance</th><th>Compagnie</th><th>Numéro</th><th>Obs</th></tr>
+   <tr><td>16/07/2026</td><td>14:55</td><td>Auckland</td><td>Aircalin</td><td>SB411</td><td>Atterri</td></tr>`,
+);
+
+function htmlResponse(body: string, status = 200): Response {
   return {
     ok: status >= 200 && status < 300,
     status,
-    json: async () => {
-      if (body === undefined) {
-        throw new SyntaxError("Unexpected end of JSON input");
-      }
-      return body;
-    },
+    text: async () => body,
   } as unknown as Response;
 }
 
-// `fetchFlights` fait deux requêtes (matin + après-midi) : on enfile donc deux
-// réponses par scénario.
-function stubFetch(...responses: Response[]): void {
+function stubFetch(...responses: Response[]) {
   const fn = vi.fn();
   for (const r of responses) {
     fn.mockResolvedValueOnce(r);
   }
   vi.stubGlobal("fetch", fn);
+  return fn;
 }
 
 afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe("fetchFlights", () => {
-  it("traite un 204 No Content comme aucun vol (ne plante pas sur un corps vide)", async () => {
-    stubFetch(fakeResponse(204), fakeResponse(204));
+describe("fetchFlights (source CCI)", () => {
+  it("récupère départs + arrivées et les normalise", async () => {
+    stubFetch(htmlResponse(DEPARTURES), htmlResponse(ARRIVALS));
 
-    await expect(fetchFlights("2026-07-17")).resolves.toEqual({
-      departures: [],
-      arrivals: [],
-    });
-  });
-
-  it("traite un 404 comme aucun vol", async () => {
-    stubFetch(fakeResponse(404), fakeResponse(404));
-
-    await expect(fetchFlights("2026-07-17")).resolves.toEqual({
-      departures: [],
-      arrivals: [],
-    });
-  });
-
-  it("lève une ApiError sur 429 (limite atteinte)", async () => {
-    stubFetch(fakeResponse(429), fakeResponse(429));
-
-    await expect(fetchFlights("2026-07-17")).rejects.toBeInstanceOf(ApiError);
-  });
-
-  it("normalise départs et arrivées autour de Nouméa (NOU)", async () => {
-    const morning = {
-      departures: [
-        {
-          movement: {
-            airport: { iata: "AKL", name: "Auckland" },
-            scheduledTime: { utc: "2026-07-16T21:00Z", local: "2026-07-17T08:00+11:00" },
-          },
-          number: "SB 410",
-          status: "Expected",
-          isCargo: false,
-          airline: { name: "Aircalin", iata: "SB" },
-        },
-      ],
-      arrivals: [
-        {
-          movement: {
-            airport: { iata: "BNE", name: "Brisbane" },
-            scheduledTime: { utc: "2026-07-17T11:30Z", local: "2026-07-17T22:30+11:00" },
-          },
-          number: "SB 151",
-          status: "Expected",
-          isCargo: false,
-          airline: { name: "Aircalin", iata: "SB" },
-        },
-      ],
-    };
-    stubFetch(fakeResponse(200, morning), fakeResponse(200, { departures: [], arrivals: [] }));
-
-    const result = await fetchFlights("2026-07-17");
+    const result = await fetchFlights("2026-07-16");
 
     expect(result.departures).toHaveLength(1);
+    expect(result.departures[0]?.number).toBe("TY203");
+    expect(result.departures[0]?.arrival.airport.iata).toBe("LIF");
     expect(result.arrivals).toHaveLength(1);
+    expect(result.arrivals[0]?.arrival.airport.iata).toBe("NOU");
+  });
 
-    const dep = result.departures[0];
-    expect(dep?.departure.airport.iata).toBe("NOU");
-    expect(dep?.arrival.airport.iata).toBe("AKL");
-    expect(dep?.number).toBe("SB 410");
+  it("interroge la CCI dans les deux sens, à la date au format JJ/MM/AAAA", async () => {
+    const fn = stubFetch(htmlResponse(DEPARTURES), htmlResponse(ARRIVALS));
 
-    const arr = result.arrivals[0];
-    expect(arr?.arrival.airport.iata).toBe("NOU");
-    expect(arr?.departure.airport.iata).toBe("BNE");
+    await fetchFlights("2026-07-16");
+
+    const urls = fn.mock.calls.map((call) => String(call[0]));
+    expect(urls.some((u) => u.includes("way=departures"))).toBe(true);
+    expect(urls.some((u) => u.includes("way=arrivals"))).toBe(true);
+    expect(urls.every((u) => u.includes("16%2F07%2F2026"))).toBe(true);
+  });
+
+  it("lève une ApiError si la CCI répond en erreur", async () => {
+    stubFetch(htmlResponse("", 502), htmlResponse("", 502));
+
+    await expect(fetchFlights("2026-07-16")).rejects.toBeInstanceOf(ApiError);
   });
 });

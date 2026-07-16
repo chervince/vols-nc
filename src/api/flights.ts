@@ -1,12 +1,8 @@
-import type { ApiFlight, ApiFlightsResponse, Flight, FlightsResponse } from "@/types";
+import type { FlightsResponse } from "@/types";
+import { parseCciFlights } from "./cci";
 
-const API_BASE = "/api";
-const AIRPORT_CODE = "NOU"; // Nouméa La Tontouta
-const NOUMEA_AIRPORT = {
-  iata: "NOU",
-  icao: "NWWW",
-  name: "Nouméa La Tontouta",
-};
+// Le proxy (nginx en prod, Vite en dev) réécrit /cci vers aeroports.cci.nc.
+const CCI_ENDPOINT = "/cci/fr/tontouta/vols/recherche";
 
 export class ApiError extends Error {
   status: number;
@@ -18,95 +14,34 @@ export class ApiError extends Error {
   }
 }
 
-// Transforme un vol départ API en vol normalisé
-function transformDeparture(apiFlight: ApiFlight): Flight {
-  const { movement } = apiFlight;
-  return {
-    number: apiFlight.number,
-    ...(apiFlight.callSign !== undefined && { callSign: apiFlight.callSign }),
-    status: apiFlight.status,
-    airline: apiFlight.airline,
-    ...(apiFlight.aircraft !== undefined && { aircraft: apiFlight.aircraft }),
-    departure: {
-      airport: NOUMEA_AIRPORT,
-      scheduledTimeLocal: movement.scheduledTime.local,
-      scheduledTimeUtc: movement.scheduledTime.utc,
-      ...(movement.terminal !== undefined && { terminal: movement.terminal }),
-      ...(movement.gate !== undefined && { gate: movement.gate }),
-    },
-    arrival: {
-      airport: movement.airport,
-      scheduledTimeLocal: movement.scheduledTime.local,
-      scheduledTimeUtc: movement.scheduledTime.utc,
-    },
-  };
+// AAAA-MM-JJ → JJ/MM/AAAA (format attendu par le formulaire CCI).
+function toFrenchDate(isoDate: string): string {
+  const [y, m, d] = isoDate.split("-");
+  return `${d ?? ""}/${m ?? ""}/${y ?? ""}`;
 }
 
-// Transforme un vol arrivée API en vol normalisé
-function transformArrival(apiFlight: ApiFlight): Flight {
-  const { movement } = apiFlight;
-  return {
-    number: apiFlight.number,
-    ...(apiFlight.callSign !== undefined && { callSign: apiFlight.callSign }),
-    status: apiFlight.status,
-    airline: apiFlight.airline,
-    ...(apiFlight.aircraft !== undefined && { aircraft: apiFlight.aircraft }),
-    departure: {
-      airport: movement.airport,
-      scheduledTimeLocal: movement.scheduledTime.local,
-      scheduledTimeUtc: movement.scheduledTime.utc,
-    },
-    arrival: {
-      airport: NOUMEA_AIRPORT,
-      scheduledTimeLocal: movement.scheduledTime.local,
-      scheduledTimeUtc: movement.scheduledTime.utc,
-      ...(movement.terminal !== undefined && { terminal: movement.terminal }),
-      ...(movement.gate !== undefined && { gate: movement.gate }),
-    },
-  };
-}
-
-async function fetchFlightsPeriod(from: string, to: string): Promise<ApiFlightsResponse> {
-  const url = `${API_BASE}/flights/airports/iata/${AIRPORT_CODE}/${from}/${to}?direction=Both&withCancelled=true&withCodeshared=false&withPrivate=false&withCargo=false`;
-
+async function fetchWay(date: string, way: "departures" | "arrivals"): Promise<string> {
+  const url = `${CCI_ENDPOINT}?way=${way}&date=${encodeURIComponent(toFrenchDate(date))}`;
   const response = await fetch(url);
-
   if (!response.ok) {
-    if (response.status === 404) {
-      return { departures: [], arrivals: [] };
-    }
-    if (response.status === 429) {
-      throw new ApiError("Limite API atteinte. Réessayez dans quelques minutes.", 429);
-    }
-    if (response.status === 401 || response.status === 403) {
-      throw new ApiError("Clé API invalide ou expirée.", response.status);
-    }
-    throw new ApiError(`Erreur serveur (${response.status})`, response.status);
+    throw new ApiError(
+      `Erreur lors de la récupération des vols (${response.status})`,
+      response.status,
+    );
   }
-
-  // 204 No Content : AeroDataBox répond ça pour un aéroport/créneau sans vol.
-  // response.ok est vrai (2xx), donc le cas passe le bloc d'erreurs ci-dessus ;
-  // sans ce court-circuit, response.json() planterait sur un corps vide.
-  if (response.status === 204) {
-    return { departures: [], arrivals: [] };
-  }
-
-  return response.json();
+  return response.text();
 }
 
+// Récupère tous les vols commerciaux de Nouméa - La Tontouta pour une date,
+// depuis le tableau officiel de l'aéroport (CCI-NC). Voir ADR-0004.
 export async function fetchFlights(date: string): Promise<FlightsResponse> {
-  // L'API AeroDataBox limite les requêtes à 12h maximum
-  // On fait donc 2 requêtes : matin (00:00-11:59) et après-midi (12:00-23:59)
-  const [morning, afternoon] = await Promise.all([
-    fetchFlightsPeriod(`${date}T00:00`, `${date}T11:59`),
-    fetchFlightsPeriod(`${date}T12:00`, `${date}T23:59`),
+  const [departuresHtml, arrivalsHtml] = await Promise.all([
+    fetchWay(date, "departures"),
+    fetchWay(date, "arrivals"),
   ]);
 
-  const apiDepartures = [...morning.departures, ...afternoon.departures];
-  const apiArrivals = [...morning.arrivals, ...afternoon.arrivals];
-
   return {
-    departures: apiDepartures.map(transformDeparture),
-    arrivals: apiArrivals.map(transformArrival),
+    departures: parseCciFlights(departuresHtml, "departure"),
+    arrivals: parseCciFlights(arrivalsHtml, "arrival"),
   };
 }

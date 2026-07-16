@@ -30,12 +30,11 @@ export function useFlights() {
         flights = flights.filter((f) => f.direction === "arrival");
       }
 
-      // Trier par heure de départ
-      return flights.sort(
-        (a, b) =>
-          new Date(a.departure.scheduledTimeLocal).getTime() -
-          new Date(b.departure.scheduledTimeLocal).getTime(),
-      );
+      // Trier par l'heure connue du vol : départ pour un départ, arrivée pour
+      // une arrivée (la source ne donne qu'un horaire par sens).
+      const timeOf = (f: DisplayFlight) =>
+        f.direction === "departure" ? f.departure.scheduledTimeLocal : f.arrival.scheduledTimeLocal;
+      return flights.sort((a, b) => new Date(timeOf(a)).getTime() - new Date(timeOf(b)).getTime());
     },
   });
 

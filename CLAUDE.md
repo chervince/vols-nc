@@ -4,7 +4,7 @@
 
 Application web affichant **tous les vols commerciaux** (toutes compagnies) au départ et à l'arrivée de **Nouméa - La Tontouta** (code IATA: NOU) pour une date choisie par l'utilisateur. « Aircalin » désigne l'identité visuelle du produit, **pas** un filtre : aucun transporteur n'est écarté (voir ADR-0003).
 
-L'application utilise l'API **AeroDataBox** via RapidAPI, proxiée côté serveur par nginx.
+Les données proviennent du **tableau de vols officiel de l'aéroport** (CCI Nouvelle-Calédonie), proxié côté serveur par nginx — **aucune clé API** (voir `.harness/decisions/0004-source-cci-tontouta.md`).
 
 ---
 
@@ -49,40 +49,31 @@ vols-nc/
 
 ---
 
-## Architecture API
+## Architecture des données (CCI-NC)
 
-### Proxy nginx (production)
+La source est le **tableau de vols officiel de l'aéroport de Nouméa - La Tontouta**
+(CCI Nouvelle-Calédonie), qui liste tous les vols commerciaux — Air Calédonie
+(domestique) comprise. **Aucune clé API.** Décision et compromis assumés :
+`.harness/decisions/0004-source-cci-tontouta.md`.
 
-En production, nginx fait office de reverse proxy vers l'API AeroDataBox. La clé API n'est **jamais exposée côté client**.
+### Proxy (nginx en prod, Vite en dev)
 
-```
-Client → /api/flights/... → nginx proxy_pass → aerodatabox.p.rapidapi.com
-```
-
-Les headers `X-RapidAPI-Key` et `X-RapidAPI-Host` sont injectés par nginx via `envsubst` au démarrage du container.
-
-### Proxy Vite (développement)
-
-En développement, Vite proxy les requêtes `/api/` vers AeroDataBox via `vite.config.ts`. La clé API est lue depuis `.env`.
-
-### Endpoints utilisés
+Le navigateur reste en same-origin ; le proxy réécrit `/cci` vers la CCI :
 
 ```
-GET /api/flights/airports/iata/{airportCode}/{fromLocal}/{toLocal}
+Client → /cci/fr/tontouta/vols/recherche → proxy → www.aeroports.cci.nc
 ```
 
-Query params : `direction=Both`, `withCancelled=true`, `withCodeshared=false`, `withPrivate=false`, `withCargo=false`
+### Requêtes
 
----
+```
+GET /cci/fr/tontouta/vols/recherche?way=departures|arrivals&date=JJ/MM/AAAA
+```
 
-## Configuration API AeroDataBox
-
-- **Base URL** : `https://aerodatabox.p.rapidapi.com`
-- **Headers requis** (injectés par le proxy, jamais côté client) :
-  ```
-  X-RapidAPI-Key: <voir DEPLOY-CREDENTIALS.local>
-  X-RapidAPI-Host: aerodatabox.p.rapidapi.com
-  ```
+Deux requêtes par date (départs + arrivées). La réponse est du **HTML** ; le
+tableau `cci-aeroport-flights` est parsé en `Flight[]` par `src/api/cci.ts`.
+Colonnes : date, heure, destination/provenance, compagnie, n° de vol, statut.
+Pas de type d'avion / terminal / porte, et une seule heure connue par vol/sens.
 
 ---
 
@@ -114,13 +105,13 @@ Toutes les informations sensibles (IP, tokens, clés API) sont dans `DEPLOY-CRED
 ### GitHub Secrets nécessaires
 
 - `SSH_PRIVATE_KEY` : clé privée ed25519 pour le déploiement SSH
-- `VITE_RAPIDAPI_KEY` : clé API RapidAPI AeroDataBox (injectée au runtime dans le container)
+- Plus de clé API : la source CCI-NC est publique (ADR-0004). `VITE_RAPIDAPI_KEY` / `RAPIDAPI_KEY` ne sont plus utilisés.
 
 ### Docker
 
 - Image : `ghcr.io/chervince/vols-nc:latest`
-- nginx sert les fichiers statiques + proxy `/api/` vers AeroDataBox
-- La clé API est passée en variable d'environnement au runtime (jamais dans l'image)
+- nginx sert les fichiers statiques + proxy `/cci/` vers le tableau CCI-NC
+- Aucune clé API à injecter au runtime (source publique — voir ADR-0004)
 
 ---
 

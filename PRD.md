@@ -65,6 +65,11 @@ Fichiers racine : `vite.config.ts`, `tsconfig.json`, `tsconfig.app.json`, `tscon
 
 ## 4. Flux de données
 
+> ⚠️ **Depuis ADR-0004, la source de données est le tableau de vols CCI-NC, pas
+> AeroDataBox.** Le flux ci-dessous et les détails AeroDataBox (§4.1–4.4, ainsi
+> que le type `ApiFlight` en §6) sont conservés à titre historique. La vérité
+> actuelle vit dans `src/api/cci.ts` + `src/api/flights.ts` et l'ADR-0004.
+
 ```
 [Zustand store] ──selectedDate──→ [useFlights hook]
                                        │
@@ -241,12 +246,9 @@ FlightFilter = 'all' | 'departures' | 'arrivals'
 
 ## 10. Variables d'environnement
 
-```env
-VITE_RAPIDAPI_KEY=<clé RapidAPI>
-VITE_RAPIDAPI_HOST=aerodatabox.p.rapidapi.com
-```
-
-Accessibles via `import.meta.env.VITE_*`.
+**Aucune** depuis ADR-0004 : la source CCI-NC est publique, aucune clé n'est
+requise (dev comme prod). Le proxy `/cci` est défini dans `vite.config.ts` (dev)
+et `nginx.conf` (prod).
 
 ---
 
@@ -317,7 +319,7 @@ npm run lint      # ESLint
 - GitHub Actions : build → push GHCR → SSH deploy
 - docker-compose sur le VPS avec labels Traefik
 - Clé API injectée au runtime via `RAPIDAPI_KEY` (env var dans docker-compose)
-- GitHub Secrets : `SSH_PRIVATE_KEY`, `VITE_RAPIDAPI_KEY`, `VPS_HOST`, `VPS_USER`, `VPS_PORT`
+- GitHub Secrets : `SSH_PRIVATE_KEY`, `VPS_HOST`, `VPS_USER`, `VPS_PORT` (plus de `VITE_RAPIDAPI_KEY` — source publique, ADR-0004)
 
 ### Labels Traefik attendus
 ```yaml
