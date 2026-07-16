@@ -55,22 +55,18 @@ describe("navigation de dates", () => {
 });
 
 describe("filtres", () => {
-  it("met à jour le filtre de vols et l'aéroport sélectionné", async () => {
+  it("met à jour le filtre de vols", async () => {
     const store = await loadStore("2026-07-14T02:00:00Z");
     store.getState().setFlightFilter("departures");
-    store.getState().setSelectedAirport("SYD");
     expect(store.getState().flightFilter).toBe("departures");
-    expect(store.getState().selectedAirport).toBe("SYD");
   });
 
   it("resetFilters revient à aujourd'hui (Nouméa) et remet les filtres", async () => {
     const store = await loadStore("2026-07-14T20:00:00Z");
     store.getState().setSelectedDate("2026-01-01");
     store.getState().setFlightFilter("arrivals");
-    store.getState().setSelectedAirport("SYD");
     store.getState().resetFilters();
     expect(store.getState().selectedDate).toBe("2026-07-15");
     expect(store.getState().flightFilter).toBe("all");
-    expect(store.getState().selectedAirport).toBeNull();
   });
 });

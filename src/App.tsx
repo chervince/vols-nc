@@ -28,14 +28,14 @@ function App() {
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white py-4 text-center text-sm text-gray-500">
         <p>
-          Données fournies par{" "}
+          Données fournies par la{" "}
           <a
-            href="https://www.aerodatabox.com/"
+            href="https://www.aeroports.cci.nc/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-aircalin-blue hover:underline"
           >
-            AeroDataBox
+            CCI Nouvelle-Calédonie
           </a>
         </p>
       </footer>

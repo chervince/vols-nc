@@ -39,7 +39,7 @@ describe("formatDateShort", () => {
 describe("formatFlightStatus", () => {
   it("traduit chaque statut en français", () => {
     expect(formatFlightStatus("Scheduled")).toBe("Prévu");
-    expect(formatFlightStatus("EnRoute")).toBe("En vol");
+    expect(formatFlightStatus("Departed")).toBe("Parti");
     expect(formatFlightStatus("Cancelled")).toBe("Annulé");
     expect(formatFlightStatus("Unknown")).toBe("Inconnu");
   });

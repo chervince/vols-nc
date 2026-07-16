@@ -2,7 +2,6 @@ import type { Airline, Airport, Flight, FlightDirection, FlightStatus } from "@/
 
 const NOUMEA_AIRPORT: Airport = {
   iata: "NOU",
-  icao: "NWWW",
   name: "Nouméa La Tontouta",
 };
 

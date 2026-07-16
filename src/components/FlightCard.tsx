@@ -104,9 +104,6 @@ export function FlightCard({ flight }: FlightCardProps) {
               </svg>
               <div className="h-px flex-1 bg-gray-300" />
             </div>
-            {flight.aircraft?.model && (
-              <p className="mt-1 text-xs text-gray-400">{flight.aircraft.model}</p>
-            )}
           </div>
 
           {/* Arrivée */}
@@ -120,15 +117,6 @@ export function FlightCard({ flight }: FlightCardProps) {
             <p className="text-sm text-gray-500">{getAirportCity(flight.arrival.airport.iata)}</p>
           </div>
         </div>
-
-        {/* Infos supplémentaires */}
-        {(flight.departure.terminal || flight.departure.gate || flight.aircraft?.reg) && (
-          <div className="mt-4 flex flex-wrap gap-3 border-t border-gray-100 pt-3 text-xs text-gray-500">
-            {flight.departure.terminal && <span>Terminal {flight.departure.terminal}</span>}
-            {flight.departure.gate && <span>Porte {flight.departure.gate}</span>}
-            {flight.aircraft?.reg && <span>Immat. {flight.aircraft.reg}</span>}
-          </div>
-        )}
       </div>
     </div>
   );

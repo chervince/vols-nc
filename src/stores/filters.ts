@@ -12,11 +12,9 @@ function getTodayDate(): string {
 interface FiltersState {
   selectedDate: string;
   flightFilter: FlightFilter;
-  selectedAirport: string | null;
 
   setSelectedDate: (date: string) => void;
   setFlightFilter: (filter: FlightFilter) => void;
-  setSelectedAirport: (airport: string | null) => void;
   goToPreviousDay: () => void;
   goToNextDay: () => void;
   resetFilters: () => void;
@@ -27,11 +25,9 @@ export const useFiltersStore = create<FiltersState>()(
     (set, get) => ({
       selectedDate: getTodayDate(),
       flightFilter: "all",
-      selectedAirport: null,
 
       setSelectedDate: (date) => set({ selectedDate: date }),
       setFlightFilter: (filter) => set({ flightFilter: filter }),
-      setSelectedAirport: (airport) => set({ selectedAirport: airport }),
 
       goToPreviousDay: () => {
         const current = new Date(get().selectedDate);
@@ -49,7 +45,6 @@ export const useFiltersStore = create<FiltersState>()(
         set({
           selectedDate: getTodayDate(),
           flightFilter: "all",
-          selectedAirport: null,
         }),
     }),
     {
