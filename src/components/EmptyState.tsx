@@ -17,7 +17,7 @@ export function EmptyState() {
           />
         </svg>
       </div>
-      <h3 className="mt-4 text-lg font-semibold text-gray-900">Aucun vol Aircalin</h3>
+      <h3 className="mt-4 text-lg font-semibold text-gray-900">Aucun vol</h3>
       <p className="mt-1 text-gray-500">Aucun vol trouvé pour cette date et ces filtres.</p>
     </div>
   );

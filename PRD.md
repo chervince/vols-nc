@@ -7,7 +7,7 @@
 
 ## 1. Vision produit
 
-Application web affichant les vols de la compagnie **Aircalin** (IATA: SB) au départ et à l'arrivée de **Nouméa La Tontouta** (IATA: NOU) pour une date choisie par l'utilisateur. Les données proviennent de l'API **AeroDataBox** via RapidAPI.
+Application web affichant **tous les vols commerciaux** (toutes compagnies) au départ et à l'arrivée de **Nouméa La Tontouta** (IATA: NOU) pour une date choisie par l'utilisateur. Aucun filtre par transporteur ; fret et aviation privée exclus (voir ADR-0003). Les données proviennent de l'API **AeroDataBox** via RapidAPI.
 
 ---
 
@@ -274,19 +274,17 @@ npm run lint      # ESLint
 - Design responsive mobile-first
 - Thème Aircalin (bleu océan + coral)
 
-### Anomalies / Écarts par rapport au CLAUDE.md
+### Anomalies / Écarts connus
 
-1. **Pas de filtrage Aircalin** : `useFlights.ts` retourne TOUS les vols de l'aéroport, pas seulement ceux d'Aircalin (SB). Le CLAUDE.md spécifie `airline.iata === 'SB'`.
+1. **Filtre par aéroport** : Le store a `selectedAirport` mais aucun composant ne l'utilise. Le dropdown destination n'est pas implémenté.
 
-2. **Titre HTML** : `index.html` a `<title>temp-app</title>` au lieu de quelque chose comme "Vols Aircalin — Nouméa".
+2. **README** : Contient le template Vite par défaut, pas la documentation projet.
 
-3. **lang HTML** : `<html lang="en">` devrait être `<html lang="fr">`.
+3. **Favicon** : Utilise `vite.svg`, pas de favicon dédié.
 
-4. **Filtre par aéroport** : Le store a `selectedAirport` mais aucun composant ne l'utilise. Le dropdown destination n'est pas implémenté.
-
-5. **README** : Contient le template Vite par défaut, pas la documentation projet.
-
-6. **Favicon** : Utilise `vite.svg`, pas de favicon Aircalin.
+> Le « filtrage Aircalin » (SB uniquement) n'est **pas** une anomalie : l'app
+> affiche volontairement tous les vols commerciaux, toutes compagnies (ADR-0003).
+> Le `<title>` et `lang="fr"` de `index.html` sont corrigés.
 
 ---
 

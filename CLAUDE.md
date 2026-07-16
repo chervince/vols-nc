@@ -2,7 +2,7 @@
 
 ## Contexte du projet
 
-Application web affichant les vols de la compagnie **Aircalin** (code IATA: SB) au départ et à l'arrivée de **Nouméa** (code IATA: NOU) pour une date choisie par l'utilisateur.
+Application web affichant **tous les vols commerciaux** (toutes compagnies) au départ et à l'arrivée de **Nouméa - La Tontouta** (code IATA: NOU) pour une date choisie par l'utilisateur. « Aircalin » désigne l'identité visuelle du produit, **pas** un filtre : aucun transporteur n'est écarté (voir ADR-0003).
 
 L'application utilise l'API **AeroDataBox** via RapidAPI, proxiée côté serveur par nginx.
 
@@ -90,7 +90,7 @@ Query params : `direction=Both`, `withCancelled=true`, `withCodeshared=false`, `
 
 1. **Sélection de date** — Date picker + navigation J-1/J+1
 2. **Filtrage** — Par type (tous/départs/arrivées), par destination (futur)
-3. **Filtrage Aircalin** — Seuls les vols `airline.iata === "SB"` sont affichés
+3. **Toutes compagnies** — Aucun filtre par transporteur : tous les vols **commerciaux** de NOU sont affichés (fret et aviation privée exclus via l'API — voir ADR-0003)
 4. **Affichage** — Cartes de vol avec numéro, horaires, statut, avion
 5. **Gestion des états** — Loading, erreur (retry), aucun résultat
 6. **Cache** — TanStack Query (stale 5min, GC 30min, refetch on focus)

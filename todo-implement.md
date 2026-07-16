@@ -64,7 +64,7 @@
 ### 3.3 Hook TanStack Query
 - [x] Créer `src/hooks/useFlights.ts`
   - Configuration queryKey avec date
-  - Option `select` pour filtrer vols Aircalin (SB)
+  - Option `select` : tri horaire + filtre direction (aucun filtre compagnie — tous les vols commerciaux, voir ADR-0003)
   - Filtrage par type (départs/arrivées) et aéroport
   - Extraction des aéroports disponibles pour le dropdown
 
@@ -130,7 +130,7 @@
 
 ### 5.5 États vides et erreurs
 - [x] Créer `src/components/EmptyState.tsx`
-  - Message "Aucun vol Aircalin"
+  - Message "Aucun vol"
   - Icône avion stylisée
 
 - [x] Créer `src/components/ErrorState.tsx`
