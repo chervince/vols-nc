@@ -130,14 +130,17 @@ function extractRows(html: string): CciRow[] {
 // Nouméa porte l'heure connue ; le côté distant n'a pas d'heure — la CCI ne
 // donne qu'un seul horaire par vol et par sens.
 export function parseCciFlights(html: string, direction: FlightDirection): Flight[] {
-  return extractRows(html).map((row) => {
+  // Écarte les entrées masquées de la CCI (compagnie « ZZ », numéro sans chiffre
+  // type « ZZZKSUY ») : pas des vols commerciaux exploitables.
+  const rows = extractRows(html).filter((row) => /\d/.test(primaryNumber(row.flight)));
+  return rows.map((row) => {
+    const number = primaryNumber(row.flight);
     const remote = toAirport(row.city);
     const noumea = {
       airport: NOUMEA_AIRPORT,
       scheduledTimeLocal: toIsoLocal(row.date, row.time),
     };
     const distant = { airport: remote, scheduledTimeLocal: "" };
-    const number = primaryNumber(row.flight);
     return {
       number,
       status: toStatus(row.status),

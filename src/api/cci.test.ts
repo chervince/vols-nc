@@ -32,6 +32,14 @@ const DEPARTURES_HTML = `
     <td data-label="Numéro de vol">SB140 / QF8692</td>
     <td data-label="Observation"></td>
   </tr>
+  <tr>
+    <td data-label="Date">16/07/2026</td>
+    <td data-label="Heure">10:00</td>
+    <td class="airport" data-label="Destination">Nandi</td>
+    <td data-label="Compagnie">ZZ</td>
+    <td data-label="Numéro de vol">ZZZKSUY</td>
+    <td data-label="Observation">Parti</td>
+  </tr>
 </table>`;
 
 const ARRIVALS_HTML = `
@@ -55,6 +63,10 @@ describe("parseCciFlights — départs", () => {
 
   it("ignore l'en-tête et parse les lignes de données", () => {
     expect(flights).toHaveLength(3);
+  });
+
+  it("écarte les entrées masquées (compagnie ZZ, numéro sans chiffre)", () => {
+    expect(flights.some((f) => f.number === "ZZZKSUY")).toBe(false);
   });
 
   it("normalise un vol domestique Air Calédonie (NOU → Lifou)", () => {
