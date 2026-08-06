@@ -1,4 +1,8 @@
-name: Build & Deploy
+# Construit l'image et la publie sur GHCR. Ne déploie pas : le projet est
+# retiré du VPS pour une durée indéterminée (ADR-0005). L'étape « Deploy to
+# VPS » retirée reste disponible dans l'historique :
+#   git show c3d854f:.github/workflows/deploy.yml
+name: Build
 
 on:
   push:
@@ -9,7 +13,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -30,14 +34,3 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.VPS_PORT }}
-          script: |
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            cd /opt/vols-nc && docker compose up -d --force-recreate

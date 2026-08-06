@@ -4,6 +4,15 @@
 > **Statut** : Terminé
 > **Date** : 2026-03-08
 
+> ⚠️ **État au 2026-08-06 — ce déploiement n'est plus actif.** Le projet a été
+> retiré du VPS pour une durée indéterminée : `/opt/vols-nc` n'existe plus et
+> `https://vols.neith-consulting.com` ne sert plus l'application. Voir
+> [ADR-0005](../.harness/decisions/0005-deploiement-suspendu.md).
+>
+> Ce qui suit reste le compte rendu, exact à sa date, de la story telle qu'elle
+> a été livrée — et la référence pour la restaurer (labels Traefik inclus). Les
+> cases cochées décrivent mars 2026, pas aujourd'hui.
+
 ## Objectif
 
 Rendre l'application accessible publiquement sur `https://vols.neith-consulting.com` via le VPS existant avec Traefik.

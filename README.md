@@ -29,7 +29,10 @@ just gate         # Juge qualité : tout doit être vert (le plancher, pas le bu
 - [`.harness/HARNESS.md`](.harness/HARNESS.md) — le contrat qualité
 - [`.harness/decisions/`](.harness/decisions/) — les décisions d'architecture (ADR)
 
-## Déploiement
+## Déploiement — suspendu
 
-Automatisé via GitHub Actions (build → GHCR → déploiement SSH) :
-[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+L'application **n'est pas en ligne** : le projet a été retiré du VPS pour une
+durée indéterminée (voir [ADR-0005](.harness/decisions/0005-deploiement-suspendu.md)).
+
+Le pipeline construit toujours l'image et la publie sur GHCR, mais ne déploie
+plus : [`.github/workflows/build.yml`](.github/workflows/build.yml).

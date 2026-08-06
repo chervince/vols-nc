@@ -88,23 +88,33 @@ Pas de type d'avion / terminal / porte, et une seule heure connue par vol/sens.
 
 ---
 
-## Déploiement
+## Déploiement — **suspendu**
 
-### Infrastructure
+L'application **n'est pas en ligne**. Le projet a été retiré du VPS le
+2026-08-06 pour une durée indéterminée : `/opt/vols-nc` n'existe plus sur
+l'hôte, et `https://vols.neith-consulting.com` ne sert plus l'application.
+Décision et procédure de restauration : `.harness/decisions/0005-deploiement-suspendu.md`.
+
+### État du pipeline
+
+- **CI/CD** : GitHub Actions → GHCR. Le pipeline s'arrête à l'image publiée ;
+  il n'y a plus d'étape de déploiement (`.github/workflows/build.yml`).
+- **Repo** : `chervince/vols-nc`
+
+### Cible historique (à restaurer le jour venu — ADR-0005)
 
 - **VPS** : Debian 12 avec Docker + Traefik v3.6
 - **URL** : `https://vols.neith-consulting.com`
-- **DNS** : Cloudflare (proxy activé)
-- **CI/CD** : GitHub Actions → GHCR → SSH deploy
-- **Repo** : `chervince/vols-nc`
+- **DNS** : Cloudflare (proxy activé) — pointe toujours vers l'ancien hôte
 
 ### Credentials
 
 Toutes les informations sensibles (IP, tokens, clés API) sont dans `DEPLOY-CREDENTIALS.local` (fichier local, non suivi par git).
 
-### GitHub Secrets nécessaires
+### GitHub Secrets
 
-- `SSH_PRIVATE_KEY` : clé privée ed25519 pour le déploiement SSH
+- Aucun secret n'est nécessaire au pipeline actuel (`GITHUB_TOKEN` suffit pour GHCR).
+- `SSH_PRIVATE_KEY`, `VPS_HOST`, `VPS_USER`, `VPS_PORT` : inutilisés depuis l'ADR-0005, conservés pour la restauration.
 - Plus de clé API : la source CCI-NC est publique (ADR-0004). `VITE_RAPIDAPI_KEY` / `RAPIDAPI_KEY` ne sont plus utilisés.
 
 ### Docker
