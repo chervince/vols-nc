@@ -31,8 +31,9 @@ tranche par un ADR, pas en créant un second journal en silence.
 
 ## Le gabarit d'ADR
 
-`.agents/skills/domain-modeling/ADR-FORMAT.md` (fichier vendored, verrouillé par
-`skills-lock.json`) décrit un gabarit « une à trois phrases » dans `docs/adr/`.
+`.agents/skills/domain-modeling/ADR-FORMAT.md` (fichier vendored, consigné dans
+`skills-lock.json` — jamais édité ; aucun capteur ne recompare les sommes,
+l'interdit est tenu par revue) décrit un gabarit « une à trois phrases » dans `docs/adr/`.
 **Il est superseded ici** par `.harness/decisions/0000-template.md`, qui exige en
 plus le critère qui a tranché (Cohérence / Scalabilité / Modularité / Élégance)
 et ce qui a été troqué — c'est cette traçabilité-là qui fait le Tier 1. Le

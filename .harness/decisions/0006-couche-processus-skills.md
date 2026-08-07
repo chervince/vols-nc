@@ -7,9 +7,11 @@
 ## Context
 
 Le harnais 0.5.0 impose de déclarer la couche processus du projet dans un ADR
-(`.harness/integration.md`). Ce dépôt en a une depuis juillet 2026 : un pack de
-24 skills d'ingénierie (`mattpocock/skills`), vendored dans `.agents/skills/` et
-verrouillé par `skills-lock.json`.
+(`.harness/integration.md`). La méthode de ce dépôt est en place depuis
+juillet 2026 — stories et revues dans `docs/` depuis le 14/07, `CONTEXT.md`
+depuis le 17/07. Son pack de 22 skills d'ingénierie (`mattpocock/skills`)
+entre dans le dépôt par cette passe, vendored dans `.agents/skills/`, ses
+sommes consignées dans `skills-lock.json`.
 
 Le pack et le harnais revendiquaient les mêmes artefacts. Trois collisions
 constatées, fichier par fichier, avant cette décision :
@@ -20,7 +22,7 @@ constatées, fichier par fichier, avant cette décision :
    pas encore — il serait né au premier ADR écrit par une skill.
 2. **Deux protocoles de revue.** Le pack livre `/code-review` (deux axes,
    sous-agents parallèles, aucun verdict) ; le harnais livre `.harness/review.md`
-   (cinq étages, APPROVE ou FIX). Et **aucune des 24 skills ne connaît
+   (cinq étages, APPROVE ou FIX). Et **aucune des 22 skills ne connaît
    `just gate`** (vérifié par grep) : la revue du pack dépenserait du jugement
    sur ce que l'étage 0 attrape gratuitement, et `/implement` peut se déclarer
    terminé sans gate.
@@ -32,12 +34,14 @@ constatées, fichier par fichier, avant cette décision :
 ## Options considered
 
 1. **Retirer le pack.** Il apporte de vraies choses que le harnais ne fournit
-   pas et ne fournira pas : `CONTEXT.md` (glossaire de domaine), `/grilling`,
-   `/diagnosing-bugs`, `/to-spec`. C'est exactement la couche que le harnais
-   refuse de livrer (harness ADR-0010).
+   pas et ne fournira pas : `/grilling`, `/diagnosing-bugs`, `/to-spec`,
+   `/domain-modeling` — l'outillage qui entretient `CONTEXT.md` (le glossaire
+   lui-même précède le pack de trois semaines). C'est exactement la couche que
+   le harnais refuse de livrer (harness ADR-0010).
 2. **Éditer les fichiers vendored** pour les aligner sur le harnais. Une mise à
-   jour du pack les écraserait ; `skills-lock.json` détecterait la divergence
-   comme une corruption. Même erreur que d'éditer un fichier `*.harness.*`.
+   jour du pack les écraserait — et l'interdit d'édition est **tenu par
+   revue** : aucun capteur ne recompare aujourd'hui les sommes du lock. Même
+   erreur que d'éditer un fichier `*.harness.*`.
 3. **Garder le pack, plier ce qui est project-owned, et enregistrer les
    divergences ici.**
 
@@ -45,8 +49,11 @@ constatées, fichier par fichier, avant cette décision :
 
 Option 3. Déclaration, telle que `.harness/integration.md` la demande :
 
-- **Couche processus** — `mattpocock/skills`, vendored dans `.agents/skills/`,
-  versions épinglées par `skills-lock.json`.
+- **Couche processus** — `mattpocock/skills`, vendored dans `.agents/skills/`.
+  `skills-lock.json` consigne la source et les sommes SHA-256 des 66 fichiers
+  importés ; la **référence amont n'a pas été enregistrée au vendoring** — à
+  épingler à la première synchronisation. Aucun capteur ne recompare les
+  sommes : l'intégrité du pack est tenue par git et par revue.
 - **Où le travail est spécifié** — `docs/stories/story-NNN-<slug>.md`, un
   fichier par story (brief, spécification, hors périmètre). Pas d'issues
   GitHub. `stories/` à la racine est antérieur au harnais et n'est plus
