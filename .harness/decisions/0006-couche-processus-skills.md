@@ -1,4 +1,4 @@
-# ADR-0005 — Couche processus : pack de skills d'ingénierie sous le harnais
+# ADR-0006 — Couche processus : pack de skills d'ingénierie sous le harnais
 
 - **Status:** Accepted
 - **Date:** 2026-08-07

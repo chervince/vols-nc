@@ -37,7 +37,7 @@ tranche par un ADR, pas en créant un second journal en silence.
 plus le critère qui a tranché (Cohérence / Scalabilité / Modularité / Élégance)
 et ce qui a été troqué — c'est cette traçabilité-là qui fait le Tier 1. Le
 fichier vendored n'est pas édité : une mise à jour du pack l'écraserait. Voir
-ADR-0005.
+ADR-0006.
 
 ## Use the glossary's vocabulary
 

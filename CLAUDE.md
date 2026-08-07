@@ -152,7 +152,7 @@ Other tooling yields to `.harness/integration.md` on ADRs, review, and done.
 
 Ces skills se branchent **sous** le harnais : `.harness/integration.md` tranche
 sur les ADR, la revue de référence et la définition de « fini ». Les adaptations
-faites pour cela sont enregistrées dans ADR-0005.
+faites pour cela sont enregistrées dans ADR-0006.
 
 ### Issue tracker
 
