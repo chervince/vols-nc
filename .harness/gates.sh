@@ -41,7 +41,7 @@ step_lint() {
 }
 
 # Authoritative gate check: format + lint + import organization in a single
-# pass, without ever writing (see ADR-0001). --error-on-warnings: a warning
+# pass, without ever writing (see harness ADR-0001). --error-on-warnings: a warning
 # fails the gate (contract G2).
 step_check() {
     run biome ci --error-on-warnings .
@@ -58,7 +58,7 @@ step_test() {
 }
 
 # Dependency truthfulness. Not in the blocking gate: runs at the dependency
-# freshness cadence (scheduled CI job), not per commit. See ADR-0002.
+# freshness cadence (scheduled CI job), not per commit. See harness ADR-0002.
 step_audit() {
     if [ "$(pm)" = pnpm ]; then
         pnpm audit --audit-level=high
@@ -80,6 +80,41 @@ dr_fail() {
     [ -n "${2:-}" ] && echo "    → $2"
     dr_fails=$((dr_fails + 1))
 }
+# One decision log per repository (integration.md, rule 1): `decisions/` is the
+# log itself at the repository root, or a link to it. The link's target is
+# compared to that root — claiming "the repository's log" on the strength of
+# "it resolves somewhere" would be the doctor itself narrating confidence.
+check_decision_log() {
+    if [ ! -e .harness/decisions ] && [ ! -L .harness/decisions ]; then
+        dr_fail "no decision log at .harness/decisions" "re-run install.sh"
+    elif [ -L .harness/decisions ] && [ ! -e .harness/decisions ]; then
+        dr_fail "the decision log link does not resolve" "re-run install.sh"
+    elif [ ! -d .harness/decisions ]; then
+        dr_fail ".harness/decisions is not a directory" "delete it and re-run install.sh"
+    elif [ -L .harness/decisions ]; then
+        dl_root=$(git rev-parse --show-toplevel 2>/dev/null)
+        dl_here=$(CDPATH='' cd -- .harness/decisions && pwd -P)
+        if [ -z "$dl_root" ]; then
+            dr_fail "cannot verify the decision log link (not in a git repository)" "run doctor from the checkout"
+        elif [ "$dl_here" = "$dl_root/.harness/decisions" ]; then
+            dr_ok "decision log links to this repository's single log"
+        else
+            dr_fail "decision log links outside this repository's log" "it points at $dl_here"
+        fi
+    else
+        # A real directory here, in a repo whose root keeps its own log, is the
+        # split that rule 1 forbids and the installer reports — a sensor that
+        # blessed it would see less than the installer does.
+        dl_root=$(git rev-parse --show-toplevel 2>/dev/null)
+        dl_here=$(CDPATH='' cd -- .harness/decisions && pwd -P)
+        if [ -n "$dl_root" ] && [ "$dl_here" != "$dl_root/.harness/decisions" ] &&
+            [ -d "$dl_root/.harness/decisions" ] && [ ! -L "$dl_root/.harness/decisions" ]; then
+            dr_fail "this project keeps its own decision log while the repository's is at $dl_root" "move the ADRs there, then re-run install.sh --update"
+        else
+            dr_ok "decision log present"
+        fi
+    fi
+}
 check_hooks() {
     hooks=$(git rev-parse --git-path hooks 2>/dev/null)
     if [ -n "$hooks" ] && [ -f "$hooks/pre-push" ] && grep -q lefthook "$hooks/pre-push"; then
@@ -98,7 +133,7 @@ dr_summary() {
 }
 
 # Wiring check: are the manual next steps actually done? Verifies without
-# mutating. Not part of `gate`: environment verdict, not code verdict (ADR-0009).
+# mutating. Not part of `gate`: environment verdict, not code verdict (harness ADR-0009).
 step_doctor() {
     dr_fails=0
     echo "doctor (node) — harness $(cat .harness/VERSION 2>/dev/null || echo '?')"
@@ -131,6 +166,7 @@ step_doctor() {
     else
         dr_fail "no vitest config with coverage thresholds" "merge vitest.config.harness.ts into your vitest config"
     fi
+    check_decision_log
     check_hooks
     dr_summary
 }
@@ -138,7 +174,7 @@ step_doctor() {
 case "${1:-}" in
     gate)
         # Order matters: cheapest, most localizing failures first.
-        # Audit excluded (ADR-0002): cadenced, not blocking -> deterministic gate.
+        # Audit excluded (harness ADR-0002): cadenced, not blocking -> deterministic gate.
         step_check && step_typecheck && step_test
         ;;
     fmt) step_fmt ;;

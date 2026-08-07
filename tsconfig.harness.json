@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "// note": "Strict base enforced by the harness. HARNESS-OWNED: refreshed by install.sh --update, do not edit. Extend it from the project tsconfig.json and add paths/lib/module as needed. Do not loosen these flags outside an ADR (ADR-0008).",
+  "// note": "Strict base enforced by the harness. HARNESS-OWNED: refreshed by install.sh --update, do not edit. Extend it from the project tsconfig.json and add paths/lib/module as needed. Do not loosen these flags outside an ADR (harness ADR-0008).",
   "compilerOptions": {
     "strict": true,
     "noUncheckedIndexedAccess": true,

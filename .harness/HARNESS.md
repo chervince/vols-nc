@@ -14,9 +14,10 @@ There is exactly one way to ask "is this acceptable?":
 just gate
 ```
 
-`gate` runs every per-commit sensor gate for this stack (advisories are cadenced,
-not run here — see ADR-0002). If it is red, the work is not done — no exceptions,
-no "I'll fix it later". Green `gate` is the floor, not the goal.
+`gate` runs every per-commit sensor gate for this stack (advisories are
+cadenced, not run here — see harness ADR-0002). If it is red, the work is not
+done — no exceptions, no "I'll fix it later". Green `gate` is the floor, not
+the goal.
 
 Never invent per-project commands. If a check is worth running, it belongs in
 `gate`. Same interface everywhere; only the adapter underneath differs.
@@ -24,7 +25,7 @@ Never invent per-project commands. If a check is worth running, it belongs in
 `just doctor` is the gate's companion: it verifies the *wiring* — tools
 present at lockfile versions, configs extending the harness bases, git hooks
 active — without judging any code. Run it after installing, and whenever the
-gate behaves strangely (ADR-0009).
+gate behaves strangely (harness ADR-0009).
 
 ---
 
@@ -41,11 +42,12 @@ anything — they are preconditions, never traded against Tier 1. But they are n
 all enforced the same way, and pretending they are would itself break G1:
 
 - **Sensor-enforced** — a tool decides, not a person; you do not argue with it.
-- **Review-enforced** — no sensor covers it *yet*, so a person (or agent) judges
-  it at review, aided by the sensors that partially catch it, and records
-  non-trivial calls in an ADR. This is not a softer bar — it is a gate you must
-  be able to defend, not a suggestion. The harness's standing job is to keep
-  *converting* review-enforced rules into sensor-enforced ones as tooling allows.
+- **Review-enforced** — no sensor covers it *yet*, so a person (or agent) who
+  did not write the code judges it at review, aided by the sensors that
+  partially catch it, and records non-trivial calls in an ADR. This is not a
+  softer bar — it is a gate you must be able to defend, not a suggestion. The
+  harness's standing job is to keep *converting* review-enforced rules into
+  sensor-enforced ones as tooling allows.
 
 **G1 — Truthfulness.** The code must not lie.
 - It does what it claims (name, docstring, type, and behaviour agree). *Review;
@@ -56,8 +58,9 @@ all enforced the same way, and pretending they are would itself break G1:
   *Review; partially sensed by lint (no unreachable/dead code, no unused
   symbols) and by the ban on focused/skipped tests.*
 - Dependencies' security advisories are checked, not trusted blindly.
-  *Sensor, at the dependency-freshness cadence (ADR-0002), not per commit. License
-  scanning is deferred (ADR-0004) — review-enforced for now.*
+  *Sensor, at the dependency-freshness cadence (harness ADR-0002), not per
+  commit. License scanning is deferred (harness ADR-0004) — review-enforced for
+  now.*
 
 **G2 — Code quality.** The mechanical floor, entirely sensor-enforced:
 - format check passes (no hand-formatting debates)
@@ -67,9 +70,9 @@ all enforced the same way, and pretending they are would itself break G1:
 
 If a sensor is red, you do not argue with it — you fix the code or, if the rule
 itself is wrong for this project, you change it in the **project-owned** config
-(`biome.json`, `ruff.toml`, `.harness/local.sh` — never the `*.harness.*` bases,
-which `--update` overwrites; see ADR-0008) and record the change in an ADR. You
-never bypass it locally.
+(`biome.json`, `ruff.toml`, `.harness/local.sh` — never the `*.harness.*`
+bases, which `--update` overwrites; see harness ADR-0008) and record the change
+in an ADR. You never bypass it locally.
 
 ### Tier 1 — Judgment order (lexicographic)
 
@@ -125,7 +128,8 @@ standard on the record, then follow it.
 ## When to write an ADR
 
 A non-trivial Tier-1 decision — anything a future reader would reasonably ask
-"why was it done this way?" — is recorded as an ADR in `.harness/decisions/`.
+"why was it done this way?" — is recorded as an ADR in `decisions/`, next to
+this file.
 
 Write one when you: choose a library or pattern, introduce a boundary, relax a
 gate, adopt a new best practice, or make a trade-off between the four criteria.
@@ -151,7 +155,22 @@ Two kinds of freshness, handled differently — do not confuse them.
   changes a decision produces an ADR. Default is stability; novelty is an event
   you choose, never a background drift. Security advisories follow the same
   cadence: `audit` runs as a scheduled CI job, not a per-commit gate, so the
-  gate's verdict depends only on the code (see ADR-0002).
+  gate's verdict depends only on the code (see harness ADR-0002).
+
+---
+
+## The process layer
+
+The harness judges work; it does not produce it. Whatever produces it — a
+brief/spec/story method, a skill pack, an issue tracker — is the *process
+layer*, and it is deliberately not shipped here (harness ADR-0010).
+
+Where the two meet, `integration.md` (next to this file) is the seam. It states
+the four things the harness never yields, whatever the process layer's own
+documentation says: one decision log, one review of record, one definition of
+done, and configuration that does not lie. It also states what the project
+declares about its own method — in an ADR, like every other standing choice.
+Read it before adopting a process layer, and again before upgrading one.
 
 ---
 
@@ -164,5 +183,9 @@ Two kinds of freshness, handled differently — do not confuse them.
   criterion that decided.
 - Record non-trivial judgment calls as ADRs. Keep the trivial ones out.
 - Non-trivial diffs pass the adversarial review protocol (`review.md`, next to
-  this file) before merge: floor → truthfulness → spec → Tier 1 → decision debt.
+  this file) before merge — run by someone other than their author: floor →
+  truthfulness → spec → Tier 1 → decision debt.
+- A process layer never overrides `integration.md`: one decision log, one review
+  of record, one definition of done, no config that lies. Declare the method
+  this project uses in an ADR.
 - Commits follow `commit-convention.md`.
