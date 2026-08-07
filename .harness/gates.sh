@@ -41,7 +41,7 @@ step_lint() {
 }
 
 # Authoritative gate check: format + lint + import organization in a single
-# pass, without ever writing (see ADR-0001). --error-on-warnings: a warning
+# pass, without ever writing (see harness ADR-0001). --error-on-warnings: a warning
 # fails the gate (contract G2).
 step_check() {
     run biome ci --error-on-warnings .
@@ -58,7 +58,7 @@ step_test() {
 }
 
 # Dependency truthfulness. Not in the blocking gate: runs at the dependency
-# freshness cadence (scheduled CI job), not per commit. See ADR-0002.
+# freshness cadence (scheduled CI job), not per commit. See harness ADR-0002.
 step_audit() {
     if [ "$(pm)" = pnpm ]; then
         pnpm audit --audit-level=high
@@ -98,7 +98,7 @@ dr_summary() {
 }
 
 # Wiring check: are the manual next steps actually done? Verifies without
-# mutating. Not part of `gate`: environment verdict, not code verdict (ADR-0009).
+# mutating. Not part of `gate`: environment verdict, not code verdict (harness ADR-0009).
 step_doctor() {
     dr_fails=0
     echo "doctor (node) — harness $(cat .harness/VERSION 2>/dev/null || echo '?')"
@@ -138,7 +138,7 @@ step_doctor() {
 case "${1:-}" in
     gate)
         # Order matters: cheapest, most localizing failures first.
-        # Audit excluded (ADR-0002): cadenced, not blocking -> deterministic gate.
+        # Audit excluded (harness ADR-0002): cadenced, not blocking -> deterministic gate.
         step_check && step_typecheck && step_test
         ;;
     fmt) step_fmt ;;

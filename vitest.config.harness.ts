@@ -1,7 +1,7 @@
 import { defineConfig } from "vitest/config";
 
 // Coverage floor enforced by the harness. HARNESS-OWNED: refreshed by
-// install.sh --update, do not edit (ADR-0008). Merge this into the project
+// install.sh --update, do not edit (harness ADR-0008). Merge this into the project
 // vitest config; raise the floor there via an ADR, never lower it silently.
 export default defineConfig({
   test: {

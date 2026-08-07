@@ -144,4 +144,24 @@ NOU (Nouméa), SYD (Sydney), BNE (Brisbane), MEL (Melbourne), AKL (Auckland), NA
 ## Harness
 Quality contract: load `.harness/HARNESS.md` before planning or writing code.
 One command judges everything: `just gate` (green is the floor, not the goal).
-Non-trivial diffs are reviewed with `.harness/review.md` (floor → spec → Tier 1).
+Non-trivial diffs are reviewed with `.harness/review.md` — never by the author.
+Other tooling yields to `.harness/integration.md` on ADRs, review, and done.
+<!-- /harness:pointer -->
+
+## Agent skills
+
+Ces skills se branchent **sous** le harnais : `.harness/integration.md` tranche
+sur les ADR, la revue de référence et la définition de « fini ». Les adaptations
+faites pour cela sont enregistrées dans ADR-0005.
+
+### Issue tracker
+
+Le travail est spécifié en markdown local, un fichier par story dans `docs/stories/`. Pas d'issues GitHub. Voir `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default canonical labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix` — portés par une ligne `Statut:` dans le fichier de story. Voir `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout — root `CONTEXT.md` + `.harness/decisions/` (le journal du harnais, pas `docs/adr/`). Voir `docs/agents/domain.md`.

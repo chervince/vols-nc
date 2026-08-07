@@ -4,6 +4,11 @@ This directory is the memory of the project's judgment calls. It is the hinge
 that reconciles "up to date" with "coherent": a decision, once researched and
 recorded here, *becomes* the coherence that all later work must fit.
 
+Numbering is per project and starts at 0001. When a harness-owned document
+cites a decision of the harness *itself*, it says so explicitly ("harness
+ADR-0008"): those live in the harness repo, not here, and their numbers have
+nothing to do with yours.
+
 ## What gets an ADR
 
 A non-trivial Tier-1 decision (see `../HARNESS.md`): choosing a library or

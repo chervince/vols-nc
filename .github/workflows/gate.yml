@@ -51,7 +51,7 @@ jobs:
       - name: Run gate
         run: just gate
 
-  # Audit hors du gate bloquant (ADR-0002) : cadence hebdo + déclenchable à la main.
+  # Audit hors du gate bloquant (harness ADR-0002) : cadence hebdo + déclenchable à la main.
   audit:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest

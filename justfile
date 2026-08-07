@@ -2,7 +2,7 @@
 # Same recipes in every project. The meaning of each step is defined by the
 # adapter in .harness/gates.sh. Never add stack-specific logic here.
 # Recipes run under just's default shell (POSIX sh) — no exotic shell is
-# required on dev machines or CI runners (ADR-0006).
+# required on dev machines or CI runners (harness ADR-0006).
 
 _adapter := ".harness/gates.sh"
 
@@ -34,7 +34,7 @@ typecheck:
 test:
     sh {{_adapter}} test
 
-# Dependency audit (security advisories; license scanning deferred, ADR-0004).
+# Dependency audit (security advisories; license scanning deferred, harness ADR-0004).
 audit:
     sh {{_adapter}} audit
 

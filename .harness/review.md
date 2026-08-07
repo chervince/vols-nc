@@ -1,13 +1,56 @@
 # Adversarial review — the protocol
 
 How a change is judged before it merges. Run it on every non-trivial diff (a
-story, a PR) — ideally by an agent or human who did NOT write the code. This
-file is harness-owned (refreshed by `--update`); it is to review what
-`gates.sh` is to the gate: the same protocol everywhere, executable by any
-fresh reviewer.
+story, a PR). This file is harness-owned (refreshed by `--update`); it is to
+review what `gates.sh` is to the gate: the same protocol everywhere, executable
+by any fresh reviewer.
 
 The order is the point: each stage is cheaper than the next and can end the
 review early. Do not skip stages, do not reorder them.
+
+## Who runs it — never the author
+
+An author re-reads what they *meant*; a reviewer reads what the code *says*.
+That gap is the entire product of this file, so independence is a rule here,
+not a preference:
+
+**The reviewer is not the author of the diff.** A fresh agent, a session with
+no memory of writing the code, or a second person all qualify. In an agent
+pipeline this costs one action — so "nobody else was available" is not a
+reason, it is the thing to fix.
+
+### The invocation
+
+Give the fresh reviewer exactly this:
+
+- **the protocol** — this file;
+- **the standard** — `HARNESS.md`, `integration.md`, and `decisions/`, next to
+  it;
+- **the diff** — `git diff <base>...HEAD` (three-dot, against the merge-base),
+  and the repo to read around it;
+- **the spec** — the story, ticket, or issue that motivated the change; failing
+  that, the commit message body, and say which one it was.
+
+Withhold the author's reasoning: the "here is why I did it this way", the
+defence of a contested choice, the assurance that an edge case is handled. Each
+of those replaces a finding with a conclusion. If the reasoning matters it
+belongs in the code, a test, or an ADR — where the reviewer finds it unaided,
+which is precisely the test.
+
+### What that buys, and what it does not
+
+A fresh agent is not an independent mind: same training, neighbouring blind
+spots, wrong with the same confidence as the author. What it has is the one
+thing stage 1 needs — **no memory of the intent**. It cannot read a missing
+check as present because it remembers meaning to write it. That is the whole
+claim; do not stretch it into "independently validated".
+
+### If the author reviews anyway
+
+Then say so in the record's first line, and treat the result as what it is: an
+author's claim, not a review's finding. The verdict is still APPROVE or FIX —
+there is no third one — but a self-issued APPROVE has not been reviewed, and
+writing "reviewed" over it is the kind of lie stage 1 exists to catch.
 
 ## Stage 0 — Mechanical floor (no judgment spent)
 
@@ -75,3 +118,21 @@ Every finding names its stage and, for stage 3, its criterion ("Stage 3 —
 Coherence: …"). Nobody argues with stage 0. Stages 1–4 are argued with
 evidence, and the review's own claims obey G1: no finding without pointing at
 code.
+
+## The record
+
+A review leaves a written trace; otherwise "it was reviewed" is precisely the
+unverifiable claim G1 forbids. The shape is fixed:
+
+- **who reviewed, and whether they wrote the code** — first line;
+- **what was judged** — the diff range, and which spec it was judged against;
+- **the findings** — each naming its stage, its criterion for stage 3, and the
+  code it points at;
+- **the verdict** — APPROVE or FIX.
+
+A FIX round appends its re-review to the same record instead of replacing it:
+what was found and then fixed is part of the diff's history, not noise to
+clear away.
+
+Where the record is filed is the project's call, declared with the rest of its
+method (`integration.md`). The harness fixes the shape, not the filing.
