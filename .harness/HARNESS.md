@@ -65,6 +65,10 @@ all enforced the same way, and pretending they are would itself break G1:
 **G2 — Code quality.** The mechanical floor, entirely sensor-enforced:
 - format check passes (no hand-formatting debates)
 - linter passes with warnings treated as errors (`--error-on-warnings`)
+- frozen lint debt stays capped: suppression markers are counted in tracked
+  sources against the project-owned ceiling in `.harness/local.sh`, and an
+  unreadable ceiling fails loud. Where a stack has no per-site suppressor,
+  `just doctor` says the ratchet is not sensor-held there (harness ADR-0017).
 - type checker passes in strict mode
 - tests pass and coverage meets the project floor
 
@@ -72,7 +76,10 @@ If a sensor is red, you do not argue with it — you fix the code or, if the rul
 itself is wrong for this project, you change it in the **project-owned** config
 (`biome.json`, `ruff.toml`, `.harness/local.sh` — never the `*.harness.*`
 bases, which `--update` overwrites; see harness ADR-0008) and record the change
-in an ADR. You never bypass it locally.
+in an ADR. You never bypass it locally. The lint ceiling's *direction* lives
+here too: it only goes down, and raising it is exactly such a rule change —
+a project-owned edit plus its ADR. No sensor reads the ADR log, so the
+direction is review-enforced, like every G1 call (harness ADR-0017).
 
 ### Tier 1 — Judgment order (lexicographic)
 

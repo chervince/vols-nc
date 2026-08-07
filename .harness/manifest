@@ -1,10 +1,10 @@
-3785615021 9667 .harness/HARNESS.md
+1269995442 10226 .harness/HARNESS.md
 2310177761 8273 .harness/review.md
 454074274 4440 .harness/integration.md
 2333384784 1782 .harness/commit-convention.md
 3059534465 1895 .harness/decisions/README.md
 152719514 712 .harness/decisions/0000-template.md
-3124215813 6897 .harness/gates.sh
+951594340 12984 .harness/gates.sh
 387196533 1189 justfile
 666451144 997 lefthook.yml
 1833936855 1675 biome.harness.json
