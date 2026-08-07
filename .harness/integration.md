@@ -22,12 +22,21 @@ So the seam is stated once, here, instead of being re-litigated per project.
 Whatever the process layer's own documentation says, in a repo that installed
 the harness:
 
-1. **One decision log.** ADRs live in `decisions/`, in the template of
-   `decisions/README.md` — the one that names the criterion that decided
-   (Coherence / Scalability / Modularity / Elegance) and what was traded away. A
-   process layer that files ADRs elsewhere (`docs/adr/`, per-context folders) is
-   redirected here, not accommodated: two logs split the project's memory, and a
-   criterion-less ADR drops exactly the Tier-1 traceability the log exists for.
+1. **One decision log, per repository.** ADRs live in `decisions/`, in the
+   template of `decisions/README.md` — the one that names the criterion that
+   decided (Coherence / Scalability / Modularity / Elegance) and what was traded
+   away. A process layer that files ADRs elsewhere (`docs/adr/`, per-context
+   folders) is redirected here, not accommodated: two logs split the project's
+   memory, and a criterion-less ADR drops exactly the Tier-1 traceability the
+   log exists for.
+
+   The rule binds the *repository*, not the installation, and the log is
+   anchored at the repository root. A repo holding several stacks gets several
+   gates — different tools, different CI — and still one memory: where a
+   subproject's `decisions/` is a link to the root's log, that is the rule being
+   kept, not bent. The installer wires it (harness ADR-0015), and `just doctor`
+   compares where the link lands against the repository root — resolving
+   somewhere is not the same as resolving to the log.
 2. **One review of record.** `review.md` issues the verdict. Another review tool
    may run alongside and *feed* it — a smell pass, a security pass, a second
    axis — and its output enters as findings at whichever stage it belongs to. It

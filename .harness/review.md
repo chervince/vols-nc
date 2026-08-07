@@ -66,7 +66,14 @@ The code must not lie. Hunt specifically for:
 - names, docstrings, or types that promise something the behaviour does not do;
 - swallowed errors, silent fallbacks, dead branches pretending to be live;
 - assumptions not verified in code (a missing test, type, or assertion);
-- tests that assert nothing, or mock away the very thing they claim to test.
+- tests that assert nothing, or mock away the very thing they claim to test;
+- guards that pin a message's wording instead of the property it reports — a
+  string test protects one formulation and is disarmed by the next rewording
+  or a line fold. What holds is a property — exit codes, filesystem state,
+  lists derived from their source — asserted **positively**: require the
+  right outcome, never merely ban the wrong phrase, which asserts nothing
+  once the phrase changes. Folding output before matching closes the fold
+  vector only — a mitigation, not a property.
 
 Any finding here blocks. Truthfulness is Tier 0: it is never averaged against
 anything.
@@ -118,6 +125,39 @@ Every finding names its stage and, for stage 3, its criterion ("Stage 3 —
 Coherence: …"). Nobody argues with stage 0. Stages 1–4 are argued with
 evidence, and the review's own claims obey G1: no finding without pointing at
 code.
+
+## The FIX round
+
+A FIX re-runs the SAME protocol from stage 0. Three rules keep that loop
+convergent instead of generative:
+
+**The author changes only what the findings require.** Non-blocking debts,
+suggestions, and ideas the fixes inspired each go to their own pass, with
+their own spec. Paid inside a fix round, they widen the surface the re-review
+must judge — and the next round then finds its defects in code the previous
+round caused. That is a loop generating its own work, not closing.
+
+**The re-review replays every stage, but aims its judgment.** Stage 0 is
+mechanical and always full. Stages 1–4 spend their judgment on the fixes and
+their blast radius — what changed, and what the change could have broken —
+and verify that earlier findings stayed closed. The aim bounds where
+judgment is spent, never what may be found: a true finding is never barred
+by this rule — wherever it surfaces it blocks, and it reopens what it
+touches. What was judged clean and has not moved is simply not where the
+re-review digs.
+
+**A fresh reviewer resets the aim.** After enough rounds both sides are
+anchored — the reviewer to its findings, the author to its fixes. The same
+state can then be handed to a new reviewer with no memory of the rounds,
+invoked as for any first review: a full run, aimed at nothing, appended to
+the same record. That is not a breach of the rule above; it is a new round
+one, and it is how an over-long loop gets an unanchored verdict.
+
+**A class that recurs outranks its instances.** When the same class of defect
+survives into another round — a new wording, a new fold, a new corner of the
+same mechanism — stop fixing instances: fix the class (a test doctrine, a
+sensor, a rule of this protocol) and record the call as an ADR. Patching the
+third instance of a class is how a loop stops converging.
 
 ## The record
 
